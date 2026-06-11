@@ -13,11 +13,11 @@ db_name = os.getenv("DB_NAME")
 db_host = os.getenv("DB_HOST")
 
 SQLALCHEMY_DATABASE_URL = URL.create(
-    drivername="postgresql+psycopg",
-    username=db_user,
-    password=db_password,
-    host=db_host,
-    database=db_name
+	drivername="postgresql+psycopg",
+	username=db_user,
+	password=db_password,
+	host=db_host,
+	database=db_name
 )
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
@@ -25,11 +25,11 @@ engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 class Base(DeclarativeBase):
-    pass
+	pass
 
 def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+	db = SessionLocal()
+	try:
+		yield db
+	finally:
+		db.close()
