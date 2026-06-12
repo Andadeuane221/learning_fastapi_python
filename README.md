@@ -55,7 +55,7 @@ learning_fastapi_python/
 ### 1. Clone o repositório
 
 ```bash
-git clone https://github.com/seu-usuario/learning_fastapi_python.git
+git clone https://github.com/Andadeuane221/learning_fastapi_python.git
 cd learning_fastapi_python
 ```
 
