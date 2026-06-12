@@ -1,31 +1,50 @@
 # 🚀 learning_fastapi_python
 
-Repositório de aprendizado do **FastAPI** — um framework web moderno, rápido e de alta performance para construir APIs com Python.
+Repositório de aprendizado do **FastAPI** — construindo uma API RESTful completa, moderna e segura com Python, PostgreSQL e SQLAlchemy 2.0.
+
+---
+
+## ✨ Funcionalidades Implementadas
+
+- **CRUD Completo:** Criação, leitura, atualização e exclusão de postagens.
+- **Banco de Dados Relacional:** Integração com PostgreSQL utilizando o moderno **SQLAlchemy 2.0**.
+- **Autenticação e Segurança:** - Geração e verificação de tokens **JWT** (utilizando `PyJWT`).
+  - Hashing seguro de senhas com **Argon2** (utilizando `pwdlib`).
+- **Arquitetura Escalável:** Código refatorado e dividido em `routers` (Rotas para Usuários, Posts e Autenticação).
+- **Validação de Dados:** Schemas estritos utilizando **Pydantic v2**.
 
 ---
 
 ## 📋 Pré-requisitos
 
 - **Python 3.14.4** ou superior → [python.org/downloads](https://www.python.org/downloads/)
+- **PostgreSQL** instalado e rodando localmente (ou em nuvem).
 - **pip** (já incluso no Python 3.4+)
-- **Git** (opcional, para clonar o repositório)
-
-Verifique sua versão do Python:
-
-```bash
-python3 --version
-# Python 3.14.4
-```
 
 ---
 
 ## 📁 Estrutura do Projeto
 
-```
+O projeto foi reestruturado para manter a escalabilidade, separando responsabilidades:
+
+```text
 learning_fastapi_python/
-├── .venv/               # Ambiente virtual (não versionado)
-├── main.py              # Ponto de entrada da aplicação
-├── requirements.txt     # Dependências do projeto
+├── app/
+│   ├── routers/         # Rotas da aplicação (Endpoints)
+│   │   ├── __init__.py
+│   │   ├── auth.py      # Login e autenticação
+│   │   ├── post.py      # Operações de CRUD de posts
+│   │   └── user.py      # Criação e gestão de usuários
+│   ├── __init__.py
+│   ├── .env             # Variáveis de ambiente (NÃO VERSIONADO)
+│   ├── database.py      # Conexão e engine do SQLAlchemy
+│   ├── main.py          # Ponto de entrada da aplicação
+│   ├── models.py        # Modelos de tabelas do banco de dados
+│   ├── oauth2.py        # Lógica de geração e validação de JWT
+│   ├── schemas.py       # Modelos de validação do Pydantic
+│   └── utils.py         # Funções utilitárias (ex: hash de senhas)
+├── venv/                # Ambiente virtual (não versionado)
+├── .gitignore
 └── README.md
 ```
 
@@ -68,60 +87,43 @@ source .venv/bin/activate
 ### 4. Instale as dependências
 
 ```bash
-pip install "fastapi[standard]"
-```
-
-Ou, se o projeto já tiver um `requirements.txt`:
-
-```bash
 pip install -r requirements.txt
 ```
 
-Para gerar/atualizar o `requirements.txt` com as dependências atuais:
+### 5. Configure as Variáveis de Ambiente
 
-```bash
-pip freeze > requirements.txt
+Crie um arquivo chamado `.env` dentro da pasta `app/` e adicione as seguintes variáveis com os dados do seu banco PostgreSQL e uma chave secreta para o JWT:
+
 ```
+DB_HOST=localhost
+DB_NAME=fastapi
+DB_USER=postgres
+DB_PASSWORD=sua_senha_aqui
 
----
-
-## 🔧 Exemplo Mínimo
-
-Crie um arquivo `main.py` com o seguinte conteúdo:
-
-```python
-from fastapi import FastAPI
-
-app = FastAPI()
-
-
-@app.get("/")
-def read_root():
-    return {"message": "Hello, FastAPI!"}
-
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: str | None = None):
-    return {"item_id": item_id, "q": q}
+SECRET_KEY=gere_uma_chave_secreta_longa_e_aleatoria_aqui
 ```
 
 ---
 
 ## ▶️ Executando o Servidor
 
-### Modo de desenvolvimento (com hot reload)
+Como a aplicação agora está dentro da pasta `app/`, o comando de execução mudou.
+
+Modo de desenvolvimento (com hot reload)
+No terminal, na raiz do projeto (fora da pasta app), execute:
 
 ```bash
 fastapi dev main.py
 ```
 
-> O servidor reinicia automaticamente a cada alteração nos arquivos — ideal para desenvolvimento.
-
-### Modo de produção
+ou
 
 ```bash
-fastapi run main.py
+python -m fastapi dev
 ```
+(Alternativa usando Uvicorn diretamente: uvicorn app.main:app --reload)
+
+> O servidor reinicia automaticamente a cada alteração nos arquivos — ideal para desenvolvimento.
 
 Você verá uma saída similar a:
 
@@ -131,9 +133,9 @@ INFO     Resolved absolute path /path/to/main.py
 INFO     Searching for package file structure from directories with __init__.py files
 INFO     Importing from /path/to/learning_fastapi_python
 
- ╭─ Python module file ─╮
+ ╭─ Python module file ──╮
  │                       │
- │  🐍 main.py           │
+ │     🐍main.py         │
  │                       │
  ╰───────────────────────╯
 
@@ -165,25 +167,13 @@ INFO:     Started reloader process using WatchFiles
 
 ---
 
-## 📖 Documentação Interativa
-
-O FastAPI gera documentação automática a partir das suas rotas e type hints.
-
-| Interface | URL | Descrição |
-|-----------|-----|-----------|
-| **Swagger UI** | [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) | Documentação interativa — permite testar endpoints diretamente no browser |
-| **ReDoc** | [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc) | Documentação alternativa, mais legível |
-| **OpenAPI JSON** | [http://127.0.0.1:8000/openapi.json](http://127.0.0.1:8000/openapi.json) | Schema OpenAPI bruto em JSON |
-
----
-
-## 🛑 Encerrando o Servidor
+### 🛑 Encerrando o Servidor
 
 Pressione `CTRL + C` no terminal para parar o servidor.
 
 ---
 
-## 💤 Desativando o Ambiente Virtual
+### 💤 Desativando o Ambiente Virtual
 
 Quando terminar de trabalhar:
 
@@ -193,11 +183,27 @@ deactivate
 
 ---
 
-## 📦 Dependências Principais
+## 📖 Documentação Interativa
+
+O FastAPI gera documentação automática a partir das suas rotas e type hints.
+
+| Interface | URL | Descrição |
+|-----------|-----|-----------|
+| **Swagger UI** | [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) | Documentação interativa — permite testar os endpoints com o Token JWT. |
+| **ReDoc** | [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc) | Documentação alternativa, mais focada em leitura. |
+
+---
+
+## 📦 Dependências Principais (Atualizadas)
 
 | Pacote | Descrição |
 |--------|-----------|
-| `fastapi` | Framework principal |
+| `fastapi` | Framework principal web |
+| `sqlalchemy` | ORM para comunicação com o banco de dados (Versão 2.0+) |
+| `psycopg` | Driver moderno para conexão com PostgreSQL |
+| `pwdlib[argon2]` | Biblioteca atualizada para hash seguro de senhas |
+| `PyJWT` | Geração e decodificação moderna de tokens JWT |
+| `python-dotenv` | Carregamento seguro de variáveis de ambiente do .env |
 | `uvicorn` | Servidor ASGI (instalado junto com `fastapi[standard]`) |
 | `pydantic` | Validação de dados via type hints (incluso no FastAPI) |
 
@@ -209,6 +215,7 @@ deactivate
 - 🐍 [Documentação do Python 3.14](https://docs.python.org/3.14/)
 - 🌐 [Pydantic Docs](https://docs.pydantic.dev/)
 - 🎓 [FastAPI Tutorial — Primeiros Passos](https://fastapi.tiangolo.com/tutorial/first-steps/)
+- ▶️ [Python API Development - Comprehensive Course for Beginners](https://youtu.be/0sOvCWFmrtA)
 
 ---
 
