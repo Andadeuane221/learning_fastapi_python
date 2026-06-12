@@ -39,4 +39,4 @@ class Token(BaseModel):
 	token_type: str
 
 class TokenData(BaseModel):
-	id: str | None = None
+	id: int | None = None
